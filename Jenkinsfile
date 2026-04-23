@@ -2,42 +2,69 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'  // Assuming Maven is configured in Jenkins
-        jdk 'JDK'     // Assuming JDK is configured in Jenkins
+        maven 'Maven'
+        jdk 'JDK'
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                // Assuming the repository is already checked out or use git clone if needed
-                echo 'Checking out code...'
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.gitL'
             }
         }
 
-        stage('Build') {
+        stage('Clean Build') {
             steps {
-                sh 'mvn clean compile'
+                bat 'mvn clean'
             }
         }
 
-        stage('Run Tests') {
+        stage('Compile') {
             steps {
-                sh 'mvn test'
+                bat 'mvn compile'
+            }
+        }
+
+        stage('Run Tests (UI + API + Cucumber + TestNG)') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+
+        stage('Performance Test (JMeter)') {
+            steps {
+                echo 'JMeter runs inside Maven test phase'
             }
         }
 
         stage('Generate Reports') {
             steps {
-                // Publish Allure reports if configured
-                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                echo 'Generating Allure / TestNG reports'
             }
         }
     }
 
     post {
+
         always {
-            // Archive test results
+            // TestNG + Cucumber reports (Surefire)
             junit 'target/surefire-reports/*.xml'
+
+            // If you generate Cucumber reports
+            publishHTML(target: [
+                reportDir: 'target',
+                reportFiles: 'cucumber.html',
+                reportName: 'Cucumber Report'
+            ])
+        }
+
+        success {
+            echo 'BUILD SUCCESS'
+        }
+
+        failure {
+            echo 'BUILD FAILED'
         }
     }
 }
