@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.2">
+  <hashTree>
+
+    <!-- Test Plan -->
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Automation Exercise Performance Test" enabled="true">
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+    </TestPlan>
+
+    <hashTree>
+
+      <!-- Thread Group -->
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Users Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+      </ThreadGroup>
+
+      <hashTree>
+
+        <!-- HTTP Request - CREATE ACCOUNT API -->
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create Account API" enabled="true">
+
+          <stringProp name="HTTPSampler.domain">automationexercise.com</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.path">/api/createAccount</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+
+              <elementProp name="name" elementType="HTTPArgument">
+                <stringProp name="Argument.value">testuser</stringProp>
+              </elementProp>
+
+              <elementProp name="email" elementType="HTTPArgument">
+                <stringProp name="Argument.value">testuser@example.com</stringProp>
+              </elementProp>
+
+              <elementProp name="password" elementType="HTTPArgument">
+                <stringProp name="Argument.value">Password@123</stringProp>
+              </elementProp>
+
+              <elementProp name="title" elementType="HTTPArgument">
+                <stringProp name="Argument.value">Mr</stringProp>
+              </elementProp>
+
+              <elementProp name="birth_date" elementType="HTTPArgument">
+                <stringProp name="Argument.value">10</stringProp>
+              </elementProp>
+
+              <elementProp name="birth_month" elementType="HTTPArgument">
+                <stringProp name="Argument.value">1</stringProp>
+              </elementProp>
+
+              <elementProp name="birth_year" elementType="HTTPArgument">
+                <stringProp name="Argument.value">2000</stringProp>
+              </elementProp>
+
+            </collectionProp>
+          </elementProp>
+
+        </HTTPSamplerProxy>
+
+        <hashTree/>
+
+        <!-- Header Manager -->
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/x-www-form-urlencoded</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+
+        <hashTree/>
+
+        <!-- Result Collector -->
+        <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+
+        </ResultCollector>
+
+        <hashTree/>
+
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
