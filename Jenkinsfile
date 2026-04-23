@@ -1,70 +1,56 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-        jdk 'JDK'
-    }
-
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/your-username/your-repo.gitL'
+                git branch: 'main', url: 'https://github.com/debi201326/Capstone_Project'
             }
         }
 
-        stage('Clean Build') {
+        stage('Clean & Build') {
             steps {
-                bat 'mvn clean'
+                bat 'mvn clean compile'
             }
         }
 
-        stage('Compile') {
-            steps {
-                bat 'mvn compile'
-            }
-        }
-
-        stage('Run Tests (UI + API + Cucumber + TestNG)') {
+        stage('Run Tests (UI + API + JMeter + Cucumber + TestNG)') {
             steps {
                 bat 'mvn test'
             }
         }
 
-        stage('Performance Test (JMeter)') {
+        stage('Generate Allure Results') {
             steps {
-                echo 'JMeter runs inside Maven test phase'
+                // Ensure results folder exists
+                bat 'dir target || mkdir target'
             }
         }
 
-        stage('Generate Reports') {
+        stage('Publish Reports') {
             steps {
-                echo 'Generating Allure / TestNG reports'
+                // TestNG / Cucumber results
+                junit 'target/surefire-reports/*.xml'
+
+                // Allure report (requires Allure plugin configured)
+                allure includeProperties: false, results: [[path: 'target/allure-results']]
             }
         }
     }
 
     post {
-
         always {
-            // TestNG + Cucumber reports (Surefire)
-            junit 'target/surefire-reports/*.xml'
-
-            // If you generate Cucumber reports
-            publishHTML(target: [
-                reportDir: 'target',
-                reportFiles: 'cucumber.html',
-                reportName: 'Cucumber Report'
-            ])
+            echo 'Test Execution Completed'
+            cleanWs()
         }
 
         success {
-            echo 'BUILD SUCCESS'
+            echo 'Build SUCCESS'
         }
 
         failure {
-            echo 'BUILD FAILED'
+            echo 'Build FAILED'
         }
     }
 }
